@@ -1,7 +1,7 @@
 from django.db import models
 
 
-class ArticlesManager(models.Manager):
+class ArticleManager(models.Manager):
 
     def create_article(self, author, header, text, type):
         article = self.model(author=author, header=header, text=text, type=type)
@@ -9,7 +9,7 @@ class ArticlesManager(models.Manager):
         return article
 
 
-class Articles(models.Model):
+class Article(models.Model):
     PUBLIC = 'Public'
     PRIVATE = 'Private'
     TypeChoices = (
