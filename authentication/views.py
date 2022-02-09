@@ -1,31 +1,31 @@
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
-from django.core.validators import validate_email
 from django.db import IntegrityError
 
-from .models import User
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from .serializers import UserSerializer
+
 
 class RegisterAPIView(APIView):
+    serializer_class = UserSerializer
 
     def post(self, request):
         try:
             data = request.data.get('user', {})
-            validate_email(data['email'])
-            validate_password(data['password'])
-            user = User.objects.create_user(email=data['email'], password=data['password'])
-            user.save()
-            response = Response({'id': user.pk}, status=status.HTTP_200_OK)
-        except KeyError:
-            response = Response({'error': 'Wrong data format.'}, status=status.HTTP_400_BAD_REQUEST)
+            serializer = self.serializer_class(data=data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            response = Response({'id': serializer.data.get("id", None)}, status=status.HTTP_200_OK)
         except IntegrityError:
-            response = Response({'error': 'User with this email address already exists.'}, status=status.HTTP_400_BAD_REQUEST)
+            response = Response({'error': 'User with this email address already exists.'},
+                                status=status.HTTP_400_BAD_REQUEST)
         except ValidationError as e:
             response = Response({'error': e}, status=status.HTTP_400_BAD_REQUEST)
+        except TypeError:
+            response = Response({'error': 'POST method requires \'email\' and \'password\''}, status=status.HTTP_400_BAD_REQUEST)
         return response
 
 
