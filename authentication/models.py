@@ -33,6 +33,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(db_index=True, unique=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    is_staff = models.BooleanField(default=False)
     role = models.CharField(max_length=3, choices=RoleChoice, default=SUBSCRIBER)
 
     USERNAME_FIELD = 'email'
