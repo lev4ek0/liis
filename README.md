@@ -1,5 +1,6 @@
 # liis Test case
-https://liis-test-case.herokuapp.com/ <br>
+Сервер: https://liis-test-case.herokuapp.com/ <br>
+Документация: https://liis-test-case.herokuapp.com/docs/ <br>
 Необходимо реализовать веб-сервис с помощью Django и захостить на сервере 
 (на каком удобно, например, heroku). В качестве СУБД рекомендуется 
 использование PostgreSQL, но доспускается SQLite. Готовым ответом будет 
