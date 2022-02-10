@@ -1,15 +1,11 @@
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
-from django.contrib.auth.password_validation import validate_password
-from django.core.validators import validate_email
 from django.db import models
 
 
 class UserManager(BaseUserManager):
 
     def create_user(self, email, password):
-        validate_email(email)
-        validate_password(password)
         user = self.model(email=self.normalize_email(email))
         user.set_password(password)
         user.save()
