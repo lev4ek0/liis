@@ -22,6 +22,6 @@ class Article(models.Model):
     text = models.CharField(max_length=200)
     creation_date = models.DateTimeField(auto_now_add=True)
     update_date = models.DateTimeField(auto_now=True)
-    type = models.CharField(max_length=10, choices=TypeChoices, default=PRIVATE)
+    type = models.CharField(max_length=10, choices=TypeChoices)
 
     objects = ArticleManager()

@@ -10,10 +10,10 @@ from .serializers import ArticleSerializer
 
 
 def author_decorator(func):
-
     def decorated(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             if request.user.role == User.AUTHOR:
+                # checks for delete and put methods if author is owner of the article
                 if 'pk' in kwargs:
                     if get_object_or_404(Article, pk=kwargs['pk']).author != request.user.pk:
                         return Response({'error': 'You aren\'t author of this article.'},

@@ -1,6 +1,5 @@
 from django.contrib.auth import authenticate, login, logout
 from django.core.exceptions import ValidationError
-from django.db import IntegrityError
 
 from rest_framework import status
 from rest_framework.response import Response
@@ -19,14 +18,11 @@ class RegisterAPIView(APIView):
             serializer.is_valid(raise_exception=True)
             serializer.save()
             response = Response({'id': serializer.data.get("id", None)},
-                                status=status.HTTP_200_OK)
-        except IntegrityError:
-            response = Response({'error': 'User with this email address already exists.'},
-                                status=status.HTTP_400_BAD_REQUEST)
+                                status=status.HTTP_201_CREATED)
         except ValidationError as e:
             response = Response({'error': e}, status=status.HTTP_400_BAD_REQUEST)
         except KeyError as e:
-            response = Response({'error': f'POST register method requires {e}'},
+            response = Response({key: ["This field is required."] for key in e.args},
                                 status=status.HTTP_400_BAD_REQUEST)
         return response
 
@@ -44,7 +40,7 @@ class LoginAPIView(APIView):
                 response = Response({'error': 'Wrong email or password.'},
                                     status=status.HTTP_400_BAD_REQUEST)
         except KeyError as e:
-            response = Response({'error': f'POST login method requires {e}'},
+            response = Response({key: ["This field is required."] for key in e.args},
                                 status=status.HTTP_400_BAD_REQUEST)
         return response
 
@@ -53,4 +49,4 @@ class LogoutAPIView(APIView):
 
     def post(self, request):
         logout(request)
-        return Response(status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_204_NO_CONTENT)
