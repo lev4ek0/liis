@@ -1,4 +1,5 @@
 from django.core.exceptions import ObjectDoesNotExist
+from django.shortcuts import get_object_or_404
 
 from rest_framework import status
 from rest_framework.response import Response
@@ -11,10 +12,10 @@ from .serializers import ArticleSerializer
 
 def author_decorator(func):
 
-    def decorated(self, request):
+    def decorated(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             if request.user.role == User.AUTHOR:
-                response = func(self, request)
+                response = func(self, request, *args, **kwargs)
             else:
                 response = Response({'error': 'Only author can create article.'}, status=status.HTTP_403_FORBIDDEN)
         else:
@@ -51,11 +52,7 @@ class ArticleAPIView(APIView):
     @author_decorator
     def put(self, request, pk):
         data = request.data
-        try:
-            instance = Article.objects.get(pk=pk)
-        except ObjectDoesNotExist:
-            return Response({'error': f'Article with id={pk} doesn\'t exist'},
-                            status=status.HTTP_404_NOT_FOUND)
+        instance = get_object_or_404(Article, pk=pk)
         serializer = self.serializer_class(instance=instance, data=data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -63,9 +60,5 @@ class ArticleAPIView(APIView):
 
     @author_decorator
     def delete(self, request, pk):
-        try:
-            Article.objects.get(pk=pk).delete()
-        except ObjectDoesNotExist:
-            return Response({'error': f'Article with id={pk} doesn\'t exist'},
-                            status=status.HTTP_404_NOT_FOUND)
+        get_object_or_404(Article, pk=pk).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
