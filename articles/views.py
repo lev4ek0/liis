@@ -14,12 +14,16 @@ def author_decorator(func):
     def decorated(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             if request.user.role == User.AUTHOR:
+                if 'pk' in kwargs:
+                    if get_object_or_404(Article, pk=kwargs['pk']).author != request.user.pk:
+                        return Response({'error': 'You aren\'t author of this article.'},
+                                        status=status.HTTP_403_FORBIDDEN)
                 response = func(self, request, *args, **kwargs)
             else:
-                response = Response({'error': 'Only author can create article.'},
+                response = Response({'error': 'You doesn\'t have author role.'},
                                     status=status.HTTP_403_FORBIDDEN)
         else:
-            response = Response({'error': 'Log in to create article.'},
+            response = Response({'error': 'You are not logged in.'},
                                 status=status.HTTP_401_UNAUTHORIZED)
         return response
 
@@ -56,7 +60,7 @@ class ArticleAPIView(APIView):
     @author_decorator
     def put(self, request, pk):
         data = request.data
-        instance = get_object_or_404(Article, pk=pk)
+        instance = Article.objects.get(pk=pk)
         serializer = self.serializer_class(instance=instance,
                                            data=data,
                                            partial=True)
@@ -66,5 +70,5 @@ class ArticleAPIView(APIView):
 
     @author_decorator
     def delete(self, request, pk):
-        get_object_or_404(Article, pk=pk).delete()
+        Article.objects.get(pk=pk).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
