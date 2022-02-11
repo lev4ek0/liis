@@ -1,6 +1,14 @@
 # liis Test case
-Сервер: https://liis-test-case.herokuapp.com/ <br>
-Документация: https://liis-test-case.herokuapp.com/docs/ <br>
+Сервер1: https://liis-test-case.herokuapp.com/ <br>
+Сервер2(yandex compute cloud, nginx, ssl): https://lev4ek.ml/ <br>
+(базы данных на серверах разные)<br><br>
+Документация: https://app.swaggerhub.com/apis-docs/lev4ek0/liis/1.0.0 <br><br>
+Данные для теста(роль автор): <br>
+email: user@user.user <br>
+password: useruser1 <br>
+email: user2@user.user <br>
+password: useruser2<br><br>
+ТЗ:<br>
 Необходимо реализовать веб-сервис с помощью Django и захостить на сервере 
 (на каком удобно, например, heroku). В качестве СУБД рекомендуется 
 использование PostgreSQL, но доспускается SQLite. Готовым ответом будет 
